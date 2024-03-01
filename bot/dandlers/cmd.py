@@ -6,13 +6,14 @@ from aiogram.utils.formatting import Bold, as_marked_section, as_list
 from aiogram_dialog import DialogManager, StartMode
 
 from bot.state_groups import MainDialog
+from db.db_actions import add_user_to_db
 
 cmd_router = Router()
 
 
 @cmd_router.message(CommandStart())
 async def cmd_start(message: Message, state: FSMContext, dialog_manager: DialogManager) -> None:
-    # await state.clear()
+    await add_user_to_db(message.from_user.id, message.from_user.username, message.from_user.first_name, message.from_user.last_name)
     await message.answer("пожалуйста введите время и текст напоминания ")
     await dialog_manager.start(MainDialog.get_reminder, mode=StartMode.RESET_STACK)
 

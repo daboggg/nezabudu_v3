@@ -8,8 +8,27 @@ from sqlalchemy import select, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.db_helper import db_helper
+from models import User
 
 logger = logging.getLogger(__name__)
+
+
+async def add_user_to_db(user_id: int, username: str, first_name: str, last_name: str):
+    session = db_helper.get_scoped_session()
+    user: User = (await session.execute(select(User).where(User.id == user_id))).scalar()
+
+    if not user:
+        user = User(
+            id=user_id,
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+            delay_times='{"hours": [1, 3]}',
+            auto_delay_time='{"minutes": 15}',
+        )
+        session.add(user)
+        await session.commit()
+        await session.close()
 
 
 # добавить задание в бд
