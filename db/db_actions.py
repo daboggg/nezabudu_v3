@@ -28,7 +28,7 @@ async def add_user_to_db(user_id: int, username: str, first_name: str, last_name
         )
         session.add(user)
         await session.commit()
-        await session.close()
+    await session.close()
 
 
 # добавить задание в бд

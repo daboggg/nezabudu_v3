@@ -15,7 +15,7 @@ cmd_router = Router()
 async def cmd_start(message: Message, state: FSMContext, dialog_manager: DialogManager) -> None:
     await add_user_to_db(message.from_user.id, message.from_user.username, message.from_user.first_name, message.from_user.last_name)
     await message.answer("пожалуйста введите время и текст напоминания ")
-    await dialog_manager.start(MainDialog.get_reminder, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(MainDialog.set_reminder, mode=StartMode.RESET_STACK)
 
 
 # @cmd_router.message(Command(commands="help"))
