@@ -2,14 +2,15 @@ import re
 import logging
 from datetime import datetime, timedelta
 
-from parser_v2.data import day_of_week, months, months_variants
-from parser_v2.errors import DatetimeValueException, errors_translation
-from parser_v2.utils import remove_extra_spaces
+from parser_v3.data import day_of_week, months, months_variants
+from parser_v3.errors import DatetimeValueException, errors_translation
+from parser_v3.reminder import Reminder
+from parser_v3.utils import remove_extra_spaces
 
 logger = logging.getLogger(__name__)
 
 
-def extract_date__time(message: str) -> dict[str, dict]:
+def extract_date__time(message: str) -> Reminder:
     now = datetime.now()
     hour = 8
     minute = 0
@@ -119,13 +120,14 @@ def extract_date__time(message: str) -> dict[str, dict]:
     logger.info(f"datetime: {result_datetime}")
     logger.info(f"message: {msg}")
 
-    return {
-        "params": {"run_date": result_datetime, "trigger": "date"},
-        "messages": {"message": msg}
-    }
+    reminder = Reminder()
+    reminder.params = {"run_date": result_datetime, "trigger": "date"}
+    reminder.message = msg
+
+    return reminder
 
 
-def start(message: str) -> dict[str, dict]:
+def start(message: str) -> Reminder:
     try:
         return extract_date__time(remove_extra_spaces(message))
     except ValueError as e:

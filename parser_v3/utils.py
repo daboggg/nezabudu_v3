@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 
-from parser_v2.errors import DatetimeValueException, errors_translation
+from parser_v3.errors import DatetimeValueException, errors_translation
 
 
 # удаляет все лишние пробелы в начале, середине и конце строки

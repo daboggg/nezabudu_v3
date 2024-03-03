@@ -1,14 +1,13 @@
 import asyncio
 import logging
 
-import apscheduler.events
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram_dialog import setup_dialogs
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from bot.comands import set_commands
-from bot.dandlers.cmd import cmd_router
+from bot.handlers.cmd import cmd_router
 from bot.dialogs.main_dialog import main_dialog
 from settings import settings
 

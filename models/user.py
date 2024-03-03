@@ -15,3 +15,5 @@ class User(Base):
 
     delay_times: Mapped[str]
     auto_delay_time: Mapped[str]
+
+

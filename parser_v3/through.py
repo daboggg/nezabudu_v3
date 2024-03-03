@@ -4,9 +4,10 @@ import re
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
-from parser_v2.data import through_data
-from parser_v2.errors import DatetimeValueException
-from parser_v2.utils import remove_extra_spaces
+from parser_v3.data import through_data
+from parser_v3.errors import DatetimeValueException
+from parser_v3.reminder import Reminder
+from parser_v3.utils import remove_extra_spaces
 
 logger = logging.getLogger(__name__)
 
@@ -47,9 +48,10 @@ def create_datetime(date__time_dict: dict[str, int]) -> datetime:
     return dt
 
 
-def start(message: str) -> dict[str, str | dict[str, datetime]]:
-    msg, date__time_dict = extract_date__time(remove_extra_spaces(message))
-    return {
-        "params": {"run_date": create_datetime(date__time_dict), "trigger":"date"},
-        "messages": {"message": msg}
-    }
+def start(message: str) -> Reminder:
+    msg, date__time_dict, = extract_date__time(remove_extra_spaces(message))
+    reminder = Reminder()
+    reminder.params = {"run_date": create_datetime(date__time_dict), "trigger":"date"}
+    reminder.message = msg
+
+    return reminder

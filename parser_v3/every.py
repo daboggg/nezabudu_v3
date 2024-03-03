@@ -1,15 +1,16 @@
 import logging
 import re
 
-from parser_v2.data import day_of_week, end_day_of_week, months, months_variants
-from parser_v2.errors import DatetimeValueException
-from parser_v2.utils import (remove_extra_spaces, checking_hour_range, checking_minute_range,
+from parser_v3.data import day_of_week, end_day_of_week, months, months_variants
+from parser_v3.errors import DatetimeValueException
+from parser_v3.reminder import Reminder
+from parser_v3.utils import (remove_extra_spaces, checking_hour_range, checking_minute_range,
                              checking_day_range, checking_day_of_month)
 
 logger = logging.getLogger(__name__)
 
 
-def extract_date__time(message: str) -> dict[str,dict[str, str]]:
+def extract_date__time(message: str) -> Reminder:
     # словарь для значений времени {"year": 2, ...}
     tmp_dict = dict()
     period = ""
@@ -85,11 +86,14 @@ def extract_date__time(message: str) -> dict[str,dict[str, str]]:
     logger.info(f"элементы datetime: {tmp_dict}")
     logger.info(f"message: {message}")
     logger.info(f"period: {period}")
-    return {
-        "params": {**tmp_dict, "trigger": "cron"},
-        "messages": {"message": message, "period": period}
-    }
+
+    reminder = Reminder()
+    reminder.params = {**tmp_dict, "trigger": "cron"}
+    reminder.message = message
+    reminder.period = period
+
+    return reminder
 
 
-def start(message: str) -> dict[str,dict[str, str]]:
+def start(message: str) -> Reminder:
     return extract_date__time(message)
