@@ -4,9 +4,16 @@ from aiogram.types import Message
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from bot.actions import get_reminder, add_reminder
-from utils.reminder_info import get_reminder_info
+from bot.state_groups import MainDialog
 
 add_reminder_handlers = Router()
+
+
+@add_reminder_handlers.message(MainDialog.get_text, F.text)
+async def set_reminder(message: Message, apscheduler: AsyncIOScheduler, state: FSMContext, ):
+    state_data = await state.get_data()
+    state_data.get("reminder").message = message.text
+    await add_reminder(message, apscheduler, state)
 
 
 @add_reminder_handlers.message(F.text | F.voice)
@@ -16,14 +23,12 @@ async def set_reminder(message: Message, apscheduler: AsyncIOScheduler, state: F
         await state.update_data(reminder=reminder)
         if reminder.message:
             await add_reminder(message, apscheduler, state)
-
         else:
-            pass
-    #     todo !!!!!!!!!!!!!!!!!!!!!!!!!!
+            await state.set_state(MainDialog.get_text)
+            await message.answer("введите текст напоминания")
     except Exception as e:
         print(e)
-
-
+        await other_msg(message)
 
 
 @add_reminder_handlers.message()

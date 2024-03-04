@@ -28,6 +28,7 @@ async def add_reminder(message: Message, apscheduler: AsyncIOScheduler, state: F
     job = await add_job_to_scheduler(message, apscheduler, state)
     await add_remind_to_db(message, state, job.id)
     reminder_info = await get_reminder_info(state, job)
+    await state.clear()
 
     # создать id для удаления клавиатуры
     hide_kb_id = f"{message.from_user.id}{datetime.now().second}"
