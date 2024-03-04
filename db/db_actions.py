@@ -3,6 +3,7 @@ import logging
 
 import apscheduler.events
 from aiogram.fsm.context import FSMContext
+from aiogram.types import Message
 from aiogram_dialog import DialogManager
 from apscheduler.job import Job
 from sqlalchemy import select, Result
@@ -34,9 +35,10 @@ async def add_user_to_db(user_id: int, username: str, first_name: str, last_name
 
 
 # добавить задание в бд
-async def add_remind_to_db(dialog_manager: DialogManager, job_id: int) -> int:
+async def add_remind_to_db(message:Message, state: FSMContext, job_id: int):
     session = db_helper.get_scoped_session()
-    reminder: Reminder = dialog_manager.dialog_data.get("reminder")
+    state_data = await state.get_data()
+    reminder: Reminder = state_data.get("reminder")
 
     # если run_date присутствует в словаре, преобразуем datetime в строку
     if rd := reminder.params.get("run_date"):
@@ -45,7 +47,7 @@ async def add_remind_to_db(dialog_manager: DialogManager, job_id: int) -> int:
     remind = Task(
         id=job_id,
         params=json.dumps(reminder.params),
-        user_id=dialog_manager.event.from_user.id,
+        user_id=message.from_user.id,
         text=reminder.message,
         period=reminder.period,
     )

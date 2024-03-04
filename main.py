@@ -9,7 +9,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from bot.comands import set_commands
 from bot.handlers.add_reminder_handlers import add_reminder_handlers
 from bot.handlers.cmd import cmd_router
-from middlewares.apschedmiddleware import SchedulerMiddleware
+from bot.middlewares.apschedmiddleware import SchedulerMiddleware
 from settings import settings
 
 

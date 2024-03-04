@@ -1,12 +1,14 @@
+from aiogram.fsm.context import FSMContext
 from aiogram.utils.formatting import as_key_value, Italic, as_list, Bold
+from apscheduler.job import Job
 
 from parser_v3.reminder import Reminder
 from utils.from_datetime_to_str import datetime_to_str
 
 
-def get_reminder_info(dialog_manager):
-    reminder: Reminder = dialog_manager.dialog_data.get("reminder")
-    job = dialog_manager.dialog_data.get("job")
+async def get_reminder_info(state: FSMContext, job: Job):
+    state_data = await state.get_data()
+    reminder: Reminder = state_data.get("reminder")
     item = []
     if rd := reminder.period:
         item.append(as_key_value("♾", Italic(rd)))

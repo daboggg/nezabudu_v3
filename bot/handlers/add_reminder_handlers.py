@@ -4,6 +4,7 @@ from aiogram.types import Message
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from bot.actions import get_reminder, add_reminder
+from utils.reminder_info import get_reminder_info
 
 add_reminder_handlers = Router()
 
@@ -15,13 +16,14 @@ async def set_reminder(message: Message, apscheduler: AsyncIOScheduler, state: F
         await state.update_data(reminder=reminder)
         if reminder.message:
             await add_reminder(message, apscheduler, state)
+
         else:
             pass
     #     todo !!!!!!!!!!!!!!!!!!!!!!!!!!
     except Exception as e:
         print(e)
 
-    await message.answer("tadam")
+
 
 
 @add_reminder_handlers.message()
