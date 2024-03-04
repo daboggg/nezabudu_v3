@@ -4,5 +4,5 @@ __all__ = (
     "User",
 )
 from .base import Base
-from .task import Task
-from .user import User
+from .models import Task
+from .models import User
