@@ -17,5 +17,6 @@ async def get_reminder(event: Message)-> Reminder:
 
 
 async def add_reminder(dialog_manager: DialogManager):
-    job_id = await add_job_to_scheduler(dialog_manager)
-    await add_remind_to_db(dialog_manager, job_id)
+    job = await add_job_to_scheduler(dialog_manager)
+    dialog_manager.dialog_data["job"] = job
+    await add_remind_to_db(dialog_manager, job.id)

@@ -1,27 +1,26 @@
-import json
-import operator
-from datetime import datetime
-from typing import Any
-
-from aiogram.types import CallbackQuery
-from aiogram.utils.formatting import as_key_value, Italic, as_list, Bold
-from aiogram_dialog import Dialog, Window, DialogManager, Data
+from aiogram_dialog import Dialog, Window, DialogManager
 from aiogram_dialog.widgets.input import MessageInput
-from aiogram_dialog.widgets.kbd import Select, Column, Button, Back, ScrollingGroup
-from aiogram_dialog.widgets.text import Const, Format, Case
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from aiogram_dialog.widgets.text import Format
 
 from bot.actions import get_reminder, add_reminder
 from bot.state_groups import MainDialog
+from utils.reminder_info import get_reminder_info
 
 
 async def getter_set_reminder(dialog_manager: DialogManager, **kwargs):
+    if dialog_manager.dialog_data.get("reminder"):
+
+        reminder_info = get_reminder_info(dialog_manager)
+
+        return {"text": reminder_info}
 
     return {
         "text": "пожалуйста введите время и текст напоминания",
     }
 
+
 async def set_reminder(event, widget, dialog_manager: DialogManager, *_):
+    dialog_manager.dialog_data.clear()
     try:
         reminder = await get_reminder(event)
         dialog_manager.dialog_data["reminder"] = reminder

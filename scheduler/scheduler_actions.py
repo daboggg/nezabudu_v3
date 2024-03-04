@@ -32,7 +32,7 @@ async def add_job_to_scheduler(
             'text': reminder.message,
         }
     )
-    return job.id
+    return job
 
 # изменение задания в скедулере
 # async def edit_job_to_scheduler(
