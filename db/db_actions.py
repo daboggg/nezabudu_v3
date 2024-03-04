@@ -3,12 +3,14 @@ import logging
 
 import apscheduler.events
 from aiogram.fsm.context import FSMContext
+from aiogram_dialog import DialogManager
 from apscheduler.job import Job
 from sqlalchemy import select, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.db_helper import db_helper
-from models import User
+from models import User, Task
+from parser_v3.reminder import Reminder
 
 logger = logging.getLogger(__name__)
 
@@ -32,30 +34,25 @@ async def add_user_to_db(user_id: int, username: str, first_name: str, last_name
 
 
 # добавить задание в бд
-# async def add_remind_to_db(state: FSMContext, user_id: int) -> int:
-#     session = db_helper.get_scoped_session()
-#     state_data = await state.get_data()
-#     remind = state_data.get("remind")
-#     params = remind.get("params")
-#     messages = remind.get("messages")
-#
-#     # если run_date присутствует в словаре, преобразуем datetime в строку
-#     if rd := params.get("run_date"):
-#         params["run_date"] = str(rd)
-#
-#     remind = Remind(
-#         params=json.dumps(params),
-#         chat_id=user_id,
-#         text=messages.get('message'),
-#         period=messages.get('period', None),
-#     )
-#     session.add(remind)
-#     await session.flush()
-#     remind_id = remind.id
-#     await session.commit()
-#     await session.close()
-#
-#     return remind_id
+async def add_remind_to_db(dialog_manager: DialogManager, job_id: int) -> int:
+    session = db_helper.get_scoped_session()
+    reminder: Reminder = dialog_manager.dialog_data.get("reminder")
+
+    # если run_date присутствует в словаре, преобразуем datetime в строку
+    if rd := reminder.params.get("run_date"):
+        reminder.params["run_date"] = str(rd)
+
+    remind = Task(
+        id=job_id,
+        params=json.dumps(reminder.params),
+        user_id=dialog_manager.event.from_user.id,
+        text=reminder.message,
+        period=reminder.period,
+    )
+    session.add(remind)
+    await session.commit()
+    await session.close()
+
 #
 #
 # # редактирование задания в бд

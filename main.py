@@ -9,6 +9,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from bot.comands import set_commands
 from bot.handlers.cmd import cmd_router
 from bot.dialogs.main_dialog import main_dialog
+from middlewares.apschedmiddleware import SchedulerMiddleware
 from settings import settings
 
 
@@ -53,7 +54,7 @@ async def start():
     dp = Dispatcher(storage=storage)
 
     # регистрация middlewares
-    # dp.update.middleware.register(SchedulerMiddleware(scheduler))
+    dp.update.middleware.register(SchedulerMiddleware(scheduler))
 
     # подключение роутеров
     dp.include_routers(

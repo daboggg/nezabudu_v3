@@ -11,7 +11,7 @@ from aiogram_dialog.widgets.kbd import Select, Column, Button, Back, ScrollingGr
 from aiogram_dialog.widgets.text import Const, Format, Case
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-from bot.actions import get_reminder
+from bot.actions import get_reminder, add_reminder
 from bot.state_groups import MainDialog
 
 
@@ -24,7 +24,8 @@ async def getter_set_reminder(dialog_manager: DialogManager, **kwargs):
 async def set_reminder(event, widget, dialog_manager: DialogManager, *_):
     try:
         reminder = await get_reminder(event)
-        print(reminder)
+        dialog_manager.dialog_data["reminder"] = reminder
+        await add_reminder(dialog_manager)
     except Exception as e:
         print(e)
 
