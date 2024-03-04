@@ -1,13 +1,11 @@
-import json
 import logging
 
-from aiogram import Bot
 from aiogram.fsm.context import FSMContext
-from aiogram_dialog import DialogManager
+from aiogram.types import Message
 from apscheduler.job import Job
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-from bot.handlers.send_remind_hendlers import send_reminder
+from bot.handlers.send_message_handlers import send_reminder
 from parser_v3.reminder import Reminder
 
 logger = logging.getLogger(__name__)
@@ -15,11 +13,13 @@ logger = logging.getLogger(__name__)
 
 # добавление задания в скедулер
 async def add_job_to_scheduler(
-        dialog_manager: DialogManager,
+        message: Message,
+        apscheduler: AsyncIOScheduler,
+        state: FSMContext,
 ) -> Job:
-    apscheduler = dialog_manager.middleware_data.get("apscheduler")
-    reminder: Reminder = dialog_manager.dialog_data.get("reminder")
-    user_id = dialog_manager.event.from_user.id
+    state_data = await state.get_data()
+    reminder: Reminder = state_data.get("reminder")
+    user_id = message.from_user.id
 
     job = apscheduler.add_job(
         send_reminder,
@@ -27,7 +27,7 @@ async def add_job_to_scheduler(
         name=str(user_id),
         kwargs={
             'apscheduler': apscheduler,
-            'bot': dialog_manager.event.bot,
+            'bot': message.bot,
             'user_id': user_id,
             'text': reminder.message,
         }

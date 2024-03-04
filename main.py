@@ -7,8 +7,8 @@ from aiogram_dialog import setup_dialogs
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from bot.comands import set_commands
+from bot.handlers.add_reminder_handlers import add_reminder_handlers
 from bot.handlers.cmd import cmd_router
-from bot.dialogs.main_dialog import main_dialog
 from middlewares.apschedmiddleware import SchedulerMiddleware
 from settings import settings
 
@@ -59,7 +59,7 @@ async def start():
     # подключение роутеров
     dp.include_routers(
         cmd_router,
-        main_dialog,
+        add_reminder_handlers,
     )
 
     # подключение диалогов
