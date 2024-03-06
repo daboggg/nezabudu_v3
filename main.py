@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import apscheduler.events
 
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
@@ -9,7 +10,10 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from bot.comands import set_commands
 from bot.handlers.add_reminder_handlers import add_reminder_handlers
 from bot.handlers.cmd import cmd_router
+from bot.handlers.delete_reminder_handlers import delete_reminder_handlers
+from bot.handlers.edit_reminder_handlers import edit_reminder_handlers
 from bot.middlewares.apschedmiddleware import SchedulerMiddleware
+from db.db_actions import delete_task_from_db
 from settings import settings
 
 
@@ -25,8 +29,8 @@ async def stop_bot(bot: Bot):
     await bot.send_message(settings.bots.admin_id, text='Бот остановлен')
     scheduler.shutdown()
 
-# def delete_remind_from_db(job):
-#     asyncio.get_running_loop().create_task(delete_task_from_db(job))
+def delete_remind_from_db(job):
+    asyncio.get_running_loop().create_task(delete_task_from_db(job))
 
 async def start():
     logging.basicConfig(level=logging.INFO,
@@ -41,7 +45,7 @@ async def start():
     scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
 
     # слушатель на событие удаления job
-    # scheduler.add_listener(delete_remind_from_db, apscheduler.events.EVENT_JOB_REMOVED)
+    scheduler.add_listener(delete_remind_from_db, apscheduler.events.EVENT_JOB_REMOVED)
 
     scheduler.start()
 
@@ -59,7 +63,10 @@ async def start():
     # подключение роутеров
     dp.include_routers(
         cmd_router,
+        edit_reminder_handlers,
         add_reminder_handlers,
+        delete_reminder_handlers,
+
     )
 
     # подключение диалогов

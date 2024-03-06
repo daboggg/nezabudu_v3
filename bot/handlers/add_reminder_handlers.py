@@ -12,7 +12,7 @@ add_reminder_handlers = Router()
 
 # добавляем текст к напоминанию
 @add_reminder_handlers.message(MainDialog.get_text, F.text | F.voice)
-async def set_reminder(message: Message, apscheduler: AsyncIOScheduler, state: FSMContext, ):
+async def set_reminder(message: Message, apscheduler: AsyncIOScheduler, state: FSMContext) -> None:
     state_data = await state.get_data()
     if message.text:
         state_data.get("reminder").message = message.text
@@ -23,12 +23,12 @@ async def set_reminder(message: Message, apscheduler: AsyncIOScheduler, state: F
 
 
 @add_reminder_handlers.message(MainDialog.get_text)
-async def other_text(message: Message, state: FSMContext):
+async def other_text(message: Message) -> None:
     await message.answer("введите текст напоминания")
 
 
 @add_reminder_handlers.message(F.text | F.voice)
-async def set_reminder(message: Message, apscheduler: AsyncIOScheduler, state: FSMContext, ):
+async def set_reminder(message: Message, apscheduler: AsyncIOScheduler, state: FSMContext) -> None:
     try:
         reminder = await get_reminder(message)
         await state.update_data(reminder=reminder)
@@ -43,5 +43,5 @@ async def set_reminder(message: Message, apscheduler: AsyncIOScheduler, state: F
 
 
 @add_reminder_handlers.message()
-async def other_msg(message: Message):
+async def other_msg(message: Message) -> None:
     await message.answer("пожалуйста введите время и текст сообщения")

@@ -100,16 +100,15 @@ async def add_remind_to_db(message:Message, state: FSMContext, job_id: int):
 #     return list(tasks)
 #
 #
-# # удалить задание из бд
-# async def delete_task_from_db(job: apscheduler.events.JobEvent):
-#     session: AsyncSession = db_helper.get_scoped_session()
-#     if job.job_id.isdigit():
-#         result = await session.execute(select(Remind).where(Remind.id == int(job.job_id)))
-#         if task := result.scalar():
-#             logger.info(f"удален job с id: {job.job_id}")
-#             await session.delete(task)
-#         await session.commit()
-#         await session.close()
+# удалить задание из бд
+async def delete_task_from_db(job: apscheduler.events.JobEvent):
+    session: AsyncSession = db_helper.get_scoped_session()
+    result = await session.execute(select(Task).where(Task.id == job.job_id))
+    if task := result.scalar():
+        logger.info(f"удален job с id: {job.job_id}")
+        await session.delete(task)
+    await session.commit()
+    await session.close()
 #
 #
 # # взять задание из бд
