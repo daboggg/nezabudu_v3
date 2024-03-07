@@ -4,9 +4,7 @@ import logging
 import apscheduler.events
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
-from aiogram_dialog import DialogManager
-from apscheduler.job import Job
-from sqlalchemy import select, Result
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.db_helper import db_helper
@@ -32,6 +30,24 @@ async def add_user_to_db(user_id: int, username: str, first_name: str, last_name
         session.add(user)
         await session.commit()
     await session.close()
+
+
+# авто откладывание напоминания
+async def get_auto_delay_time(user_id: int):
+    session = db_helper.get_session()
+    user: User = await session.get(User, user_id)
+    auto_delay_time = user.auto_delay_time
+    session.close()
+    return auto_delay_time
+
+
+# набор для откладывания напоминания
+async def get_delay_times(user_id: int):
+    session = db_helper.get_session()
+    user: User = await session.get(User, user_id)
+    delay_times = user.delay_times
+    session.close()
+    return delay_times
 
 
 # добавить задание в бд
