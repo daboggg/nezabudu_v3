@@ -55,38 +55,40 @@ async def add_remind_to_db(message:Message, state: FSMContext, job_id: int):
     await session.commit()
     await session.close()
 
-#
-#
-# # редактирование задания в бд
-# async def edit_task_to_db(state: FSMContext, job: Job):
-#     session: AsyncSession = db_helper.get_scoped_session()
-#     state_data = await state.get_data()
-#
-#     params = state_data.get("params", None)
-#     message = state_data.get("message", None)
-#     period = state_data.get("period", None)
-#
-#     result = await session.execute(select(Remind).where(Remind.id == int(job.id)))
-#     if remind := result.scalar():
-#         logger.info(f"получен job с id: {job.id}")
-#         if params:
-#             # если run_date присутствует в словаре, преобразуем datetime в строку
-#             if rd := params.get("run_date"):
-#                 params["run_date"] = str(rd)
-#             remind.params = json.dumps(params)
-#         if message:
-#             remind.text = message
-#         if period:
-#             remind.period = period
-#         else:
-#             remind.period = None
-#
-#         session.add(remind)
-#         logger.info(f"добавлен job с id: {job.id}")
-#         result = (remind.period, remind.text)
-#         await session.commit()
-#         await session.close()
-#         return result
+
+
+# редактирование задания в бд
+async def edit_task_to_db(state: FSMContext):
+    session: AsyncSession = db_helper.get_scoped_session()
+    state_data = await state.get_data()
+    reminder:Reminder = state_data.get("reminder")
+
+    params = reminder.params
+    message = reminder.message
+    period = reminder.period
+    job_id = state_data.get("job_id")
+
+    result = await session.execute(select(Task).where(Task.id == job_id))
+    if remind := result.scalar():
+        logger.info(f"получен job с id: {job_id}")
+        if params:
+            # если run_date присутствует в словаре, преобразуем datetime в строку
+            if rd := params.get("run_date"):
+                params["run_date"] = str(rd)
+            remind.params = json.dumps(params)
+        if message:
+            remind.text = message
+        if period:
+            remind.period = period
+        else:
+            remind.period = None
+
+        session.add(remind)
+        logger.info(f"добавлен job с id: {job_id}")
+        result = (remind.period, remind.text)
+        await session.commit()
+        await session.close()
+        return result
 #
 #
 # # взять все задания из бд
