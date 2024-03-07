@@ -48,8 +48,6 @@ async def edit_reminder(message: Message, bot: Bot, state: FSMContext, apschedul
     reminder_info = await edit_reminder_info(state, job)
     await state.clear()
 
-    # todo исправить reminder_info
-
     # создать id для удаления клавиатуры
     hide_kb_id = f"{message.from_user.id}{datetime.now().second}"
 
