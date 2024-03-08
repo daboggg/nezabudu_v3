@@ -105,19 +105,19 @@ async def edit_task_to_db(state: FSMContext):
         await session.commit()
         await session.close()
         return result
-#
-#
-# # взять все задания из бд
-# async def get_tasks_from_db() -> list[Remind]:
-#     session = db_helper.get_scoped_session()
-#
-#     result: Result = await session.execute(select(Remind))
-#     tasks = result.scalars().all()
-#     await session.close()
-#
-#     return list(tasks)
-#
-#
+
+
+# взять все задания из бд
+async def get_tasks_from_db() -> list[Task]:
+    session = db_helper.get_scoped_session()
+
+    result: Result = await session.execute(select(Task))
+    tasks = result.scalars().all()
+    await session.close()
+
+    return list(tasks)
+
+
 # удалить задание из бд
 async def delete_task_from_db(job: apscheduler.events.JobEvent):
     session: AsyncSession = db_helper.get_scoped_session()

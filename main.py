@@ -9,6 +9,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from bot.comands import set_commands
 from bot.dialogs.list_reminders_dialog import list_reminders_dialog
+from bot.dialogs.settings_dialog import setting_dialog
 from bot.handlers.add_reminder_handlers import add_reminder_handlers
 from bot.handlers.cmd import cmd_router
 from bot.handlers.delay_remind_hahdlwers import delay_remind_handlers
@@ -16,6 +17,7 @@ from bot.handlers.delete_reminder_handlers import delete_reminder_handlers
 from bot.handlers.edit_reminder_handlers import edit_reminder_handlers
 from bot.middlewares.apschedmiddleware import SchedulerMiddleware
 from db.db_actions import delete_task_from_db
+from scheduler.scheduler_actions import recovery_job_to_scheduler
 from settings import settings
 
 
@@ -54,7 +56,7 @@ async def start():
     bot = Bot(token=settings.bots.bot_token, parse_mode='HTML')
 
     # восстановление заданий при старте из базы данных
-    # await recovery_job_to_scheduler(scheduler, bot)
+    await recovery_job_to_scheduler(scheduler, bot)
 
     storage = MemoryStorage()
     dp = Dispatcher(storage=storage)
@@ -70,6 +72,7 @@ async def start():
         add_reminder_handlers,
         delete_reminder_handlers,
         list_reminders_dialog,
+        setting_dialog,
 
     )
 
