@@ -14,4 +14,7 @@ class ListOfReminders(StatesGroup):
     start = State()
     show_reminder = State()
 
-
+class SettingsReminders(StatesGroup):
+    select_setting = State()
+    select_auto_delay = State()
+    select_buttons_delay = State()
