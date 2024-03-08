@@ -4,7 +4,7 @@ import logging
 import apscheduler.events
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
-from sqlalchemy import select
+from sqlalchemy import select, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.db_helper import db_helper
@@ -127,23 +127,23 @@ async def delete_task_from_db(job: apscheduler.events.JobEvent):
         await session.delete(task)
     await session.commit()
     await session.close()
-#
-#
-# # взять задание из бд
-# async def get_task_from_db(reminder_id: int) -> Remind:
-#     session = db_helper.get_scoped_session()
-#     result = await session.execute(select(Remind).where(Remind.id == reminder_id))
-#     logger.info(f"получен reminder с id: {reminder_id}")
-#     result = result.scalar()
-#     await session.close()
-#     return result
-#
-#
-# async def get_tasks_from_db_by_user_id(user_id: int) -> list[Remind]:
-#     session = db_helper.get_scoped_session()
-#
-#     result: Result = await session.execute(select(Remind).where(Remind.chat_id == user_id))
-#     tasks = result.scalars().all()
-#     await session.close()
-#
-#     return list(tasks)
+
+
+# взять задание из бд
+async def get_task_from_db(job_id: int) -> Task:
+    session = db_helper.get_scoped_session()
+    result = await session.execute(select(Task).where(Task.id == job_id))
+    logger.info(f"получен reminder с id: {job_id}")
+    result = result.scalar()
+    await session.close()
+    return result
+
+
+async def get_tasks_from_db_by_user_id(user_id: int) -> list[Task]:
+    session = db_helper.get_scoped_session()
+
+    result: Result = await session.execute(select(Task).where(Task.user_id == user_id))
+    tasks = result.scalars().all()
+    await session.close()
+
+    return list(tasks)

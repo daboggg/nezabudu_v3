@@ -5,7 +5,7 @@ from aiogram.types import Message
 from aiogram.utils.formatting import Bold, as_marked_section, as_list
 from aiogram_dialog import DialogManager, StartMode
 
-from bot.state_groups import MainDialog
+from bot.state_groups import MainDialog, ListOfReminders
 from db.db_actions import add_user_to_db
 
 cmd_router = Router()
@@ -45,7 +45,7 @@ async def cmd_start(message: Message, state: FSMContext, dialog_manager: DialogM
 #     await message.answer(help_text.as_html())
 
 
-# @cmd_router.message(Command(commands="list"))
-# async def cmd_start(_, dialog_manager: DialogManager) -> None:
-#     await dialog_manager.start(ListOfReminders.start, mode=StartMode.RESET_STACK)
+@cmd_router.message(Command(commands="list"))
+async def list_reminders(_, dialog_manager: DialogManager) -> None:
+    await dialog_manager.start(ListOfReminders.start, mode=StartMode.RESET_STACK)
 

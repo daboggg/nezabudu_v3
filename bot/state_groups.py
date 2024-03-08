@@ -10,4 +10,8 @@ class EditReminds(StatesGroup):
 class RescheduleReminds(StatesGroup):
     get_remind = State()
 
+class ListOfReminders(StatesGroup):
+    start = State()
+    show_reminder = State()
+
 
