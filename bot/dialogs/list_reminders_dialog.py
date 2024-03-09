@@ -5,8 +5,8 @@ from typing import Any
 
 from aiogram.types import CallbackQuery
 from aiogram.utils.formatting import as_key_value, Italic, as_list, Bold
-from aiogram_dialog import Dialog, Window, DialogManager, Data
-from aiogram_dialog.widgets.kbd import Select, Column, Button, Back, ScrollingGroup
+from aiogram_dialog import Dialog, Window, DialogManager
+from aiogram_dialog.widgets.kbd import Select, Button, Back, ScrollingGroup
 from aiogram_dialog.widgets.text import Const, Format, Case
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
@@ -75,7 +75,7 @@ async def on_delete_selected(callback: CallbackQuery, button: Button,
 # диалог список напоминаний
 list_reminders_dialog = Dialog(
     Window(
-        Const("📄 Список напоминаний:"),
+        Const(Bold("📄 Список напоминаний:").as_html()),
         Case(
             {
                 "0": Const("            🫲   🫱"),

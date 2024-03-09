@@ -40,7 +40,7 @@ async def send_reminder(
 
     message = await bot.send_message(user_id, format_text.as_html(), reply_markup=await delay_kb(remind_id, user_id), parse_mode='HTML')
 
-    job = apscheduler.add_job(
+    apscheduler.add_job(
         send_reminder,
         run_date=datetime.now() + timedelta(**auto_delay_time),
         id=remind_id,

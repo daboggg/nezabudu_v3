@@ -20,7 +20,7 @@ delay_remind_handlers = Router()
 async def delay_remind(callback: CallbackQuery, apscheduler: AsyncIOScheduler):
     tmp = callback.data.split(":")
     job_id = tmp[1]
-    res = {tmp[2]:int(tmp[3])}
+    res = {tmp[2]: int(tmp[3])}
     job: Job = apscheduler.reschedule_job(job_id=job_id, trigger='date',
                                           run_date=datetime.now() + timedelta(**res))
     remind_info = as_list(
@@ -51,12 +51,6 @@ async def delay_remind(callback: CallbackQuery, apscheduler: AsyncIOScheduler):
     job.remove()
 
 
-
-
-
-
-
-
 # переназначить напоминание
 @delay_remind_handlers.callback_query(F.data.startswith("reschedule_remind"))
 async def reschedule_remind(callback: CallbackQuery, state: FSMContext, apscheduler: AsyncIOScheduler):
@@ -66,12 +60,12 @@ async def reschedule_remind(callback: CallbackQuery, state: FSMContext, apschedu
     await state.update_data(job_id=job_id, user_id=int(job.name), text=job.kwargs.get("text"))
     job.remove()
     await callback.answer()
-    await callback.message.edit_text("введите время напоминания")
+    await callback.message.edit_text(Italic("✏️ 🎤 введите время напоминания").as_html())
     await state.set_state(RescheduleReminds.get_remind)
 
 
 @delay_remind_handlers.message(RescheduleReminds.get_remind, F.text | F.voice)
-async def get_remind(message: Message, bot: Bot, state: FSMContext, apscheduler: AsyncIOScheduler):
+async def get_remind(message: Message, state: FSMContext, apscheduler: AsyncIOScheduler):
     state_data = await state.get_data()
     reminder = Reminder()
 
@@ -86,10 +80,9 @@ async def get_remind(message: Message, bot: Bot, state: FSMContext, apscheduler:
             await add_reminder(message, apscheduler, state)
 
     except Exception as e:
-        await message.answer('введите время напоминания')
-
+        await message.answer(Italic("✏️ 🎤 введите время напоминания").as_html())
 
 
 @delay_remind_handlers.message(RescheduleReminds.get_remind)
 async def not_text_not_voice(message: Message):
-    await message.answer("введите время напоминания")
+    await message.answer(Italic("✏️ 🎤 введите время напоминания").as_html())

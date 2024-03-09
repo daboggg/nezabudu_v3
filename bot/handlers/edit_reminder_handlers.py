@@ -1,10 +1,10 @@
 from aiogram import Router, F, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
-from aiogram.utils.formatting import Bold, Strikethrough, Italic
+from aiogram.utils.formatting import Italic
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-from bot.actions import get_reminder, add_reminder, edit_reminder
+from bot.actions import get_reminder, edit_reminder
 from bot.state_groups import EditReminds
 from parser_v3.reminder import Reminder
 from utils.converter import conv_voice
@@ -22,7 +22,7 @@ async def start_edit_reminder(callback: CallbackQuery, state: FSMContext, apsche
     await callback.answer()
     await state.update_data(job_id=job_id)
     await callback.message.edit_text(f"👉 {job.kwargs.get('text')}")
-    await callback.message.answer(Italic("введите время и текст напоминания").as_html())
+    await callback.message.answer(Italic("✏️ 🎤 введите время и текст напоминания").as_html())
     await state.set_state(EditReminds.get_remind_time)
 
 
@@ -44,4 +44,4 @@ async def get_text_or_voice(message: Message, bot: Bot, state: FSMContext, apsch
 
 @edit_reminder_handlers.message(EditReminds.get_remind_time)
 async def other_msg(message: Message):
-    await message.answer("введите время напоминания")
+    await message.answer(Italic("✏️ 🎤 введите время напоминания").as_html())

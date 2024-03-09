@@ -25,7 +25,7 @@ async def add_user_to_db(user_id: int, username: str, first_name: str, last_name
             username=username,
             first_name=first_name,
             last_name=last_name,
-            delay_times='{"hours": [1, 3]}',
+            delay_times='''["('minutes', 10, '10 мин')"]''',
             auto_delay_time='{"minutes": 15}',
         )
         session.add(user)
@@ -50,6 +50,15 @@ async def get_auto_delay_time(user_id: int):
     auto_delay_time = user.auto_delay_time
     await session.close()
     return auto_delay_time
+
+
+# добавить откладывания напоминания
+async def set_delay_times(user_id: int, delay_times: str):
+    session = db_helper.get_session()
+    user: User = await session.get(User, user_id)
+    user.delay_times = delay_times
+    await session.commit()
+    await session.close()
 
 
 # получить набор для кнопок откладывания напоминания
